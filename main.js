@@ -62,6 +62,8 @@ const questionPage = (chapter, num) => {
     [prevChapter, prevNum] = [chapter, num]
     const data = chapterData(chapter)
 
+    document.querySelector('#page-title').innerText = data[0].chapter
+
     const html =  `
         <div id="game-box-screen" class="" data-v-65a5ecf0="" data-v-336ba400="">
             ${progressBar(num, data.length)}
@@ -139,7 +141,10 @@ function gameTable(data) {
     for(const key in data) {
         let tr = ''
         let trAns = ''
-        for(let i = 0; i < 4; i++) {
+        for(let i = 0; i < 5; i++) {
+
+            if(i == 4 && !data[key].left[i] && !data[key].right[i]) break
+
             tr += trTemplate
             trAns += `
                 <tr id="question_1_0_0" data-v-4be91447="">
@@ -255,7 +260,7 @@ function check(t) {
         let input = {left: [], right: []}
         let ans = {left: [], right: []}
 
-        for(let i = 0; i < 4; i++) {
+        for(let i = 0; i < inputTr.length; i++) {
             const inputTd = inputTr[i].querySelectorAll('td input')
             const ansTd = ansTr[i].querySelectorAll('td input')
 
