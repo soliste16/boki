@@ -22,7 +22,7 @@
     <div class="log">出力完了</div>
 
     <datalist id="list">
-        <option></option>
+        <option>仕訳なし</option>
         <option>買掛金</option>
         <option>売掛金</option>
         <option>受取手形</option>
@@ -42,12 +42,46 @@
         <option>貸付金</option>
         <option>借入金</option>
         <option>破産更生債権等</option>
-        <option></option>
+        <option>有価証券評価損益</option>
+        <option>投資有価証券評価損益</option>
+        <option>売買目的有価証券</option>
+        <option>満期保有目的債権</option>
+        <option>その他有価証券</option>
+        <option>その他有価証券評価差額金</option>
+        <option>有価証券利息</option>
+        <option>子会社株式</option>
+        <option>子会社株式評価損</option>
+        <option>関連会社株式</option>
+        <option>関連会社株式評価損</option>
+        <option>車両</option>
+        <option>減価償却累計額</option>
+        <option>固定資産売却益</option>
+        <option>固定資産売却損</option>
+        <option>減価償却費</option>
+        <option>減損損失</option>
+        <option>建物</option>
+        <option>機械装置</option>
+        <option>資産除去債務</option>
+        <option>利息費用</option>
+        <option>履行差額</option>
     </datalist>
 
     <datalist id="chapter">
         <option>1. 現金・預金と保証債務 - 基礎①</option>
         <option>2. 貸倒引当金 - 基礎①</option>
+        <option>3. 有価証券1 - 基礎①</option>
+        <option>4. 有形固定資産1 - 基礎①</option>
+        <option>5. 減損会計1 - 基礎①</option>
+        <option>6. 資産除去債務1 - 基礎①</option>
+        <option>7. リース会計1 - 基礎①</option>
+        <option>8. 負債、退職給付会計1 - 基礎①</option>
+        <option>9. 社債1 - 基礎①</option>
+        <option>10. 純資産1 - 基礎①</option>
+        <option>11. 商品 - 基礎①</option>
+        <option>12. 外貨換算会計1 - 基礎①</option>
+        <option>13. デリバティブ - 基礎①</option>
+        <option>14. 研究開発費とソフトウェア - 基礎①</option>
+        <option>15. 会計上の変更と誤謬の訂正 - 基礎①</option>
     </datalist>
 </body>
 </html>
@@ -202,7 +236,7 @@ function handleChange(t) {
 
 const output = () => {
     const chapter = document.querySelector('input.chapter').value
-    const text = document.querySelector('textarea').value.replace('\n', '<br>')
+    const text = document.querySelector('textarea').value.replaceAll('\n', '<br>')
     const tiles = document.querySelectorAll('div.tile')
 
     let data = {ans: {}}
@@ -265,6 +299,7 @@ const download = () => {
 
 const reset = () => {
     document.querySelector('textarea').value = ''
+    document.querySelectorAll('div.tile:not(:first-of-type)').forEach(tile => tile.remove())
     document.querySelectorAll('div.tile input')
         .forEach(input => {
             input.value = ''
