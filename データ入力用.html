@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <main>
+        <input type="text" list="chapter" class="chapter">
+
+        <textarea type="text" class = "desc"></textarea>
+
+        <button onclick="genTile()">足す</button>
+        <button onclick="output()">出力</button>
+        <button onclick="reset()">リセット</button>
+        <button onclick="del()">削除</button>
+        <button onclick="download()">ダウンロード</button>
+    </main>
+
+    <div class="log">出力完了</div>
+
+    <datalist id="list">
+        <option>買掛金</option>
+        <option>売掛金</option>
+        <option>受取手形</option>
+        <option>支払手形</option>
+        <option>手形売却益</option>
+        <option>手形売却損</option>
+        <option>保証債務</option>
+        <option>保証債務費用</option>
+        <option>保証債務取崩益</option>
+        <option>当座預金</option>
+        <option>現金</option>
+    </datalist>
+
+    <datalist id="chapter">
+        <option>1. 現金・預金と保証債務 - 基礎①</option>
+        <option>2. 貸倒引当金 - 基礎①</option>
+    </datalist>
+</body>
+</html>
+
+
+<style>
+body {
+    font-family: '游ゴシック','Yu Gothic',YuGothic,'Hiragino Mincho Pro',serif;
+    position: relative;
+}
+
+main {
+    margin: 0 auto;
+    width: 700px;
+}
+
+td {
+    width: 150px;
+}
+
+input {
+    height: 1.5em;
+}
+
+input.chapter {
+    margin-bottom: 30px;
+}
+
+input.title {
+    width: 400px;
+    margin-bottom: 10px;
+}
+
+td input {
+    width: 150px;
+}
+
+td.number input {
+    text-align: right;
+}
+
+textarea {
+    width: 150px;
+}
+
+textarea.desc {
+    width: 700px;
+    height: 12em;
+    line-height: 1.5em;
+    font-family: '游ゴシック','Yu Gothic',YuGothic,'Hiragino Mincho Pro',serif;
+}
+
+div.tile {
+    padding: 20px 20px;
+    margin: 10px 0;
+    background: #eee;
+}
+
+div.log {
+    padding: 10px 20px;
+    background: black;
+    color: white;
+    font-weight: bold;
+    display: inline-block;
+    position: fixed;
+    bottom: -50px;
+    right: 20px;
+    transition: .3s;
+    opacity: 0;
+}
+
+div.log.show {
+    transform: translateY(-100px);
+    opacity: 1;
+}
+</style>
+
+<script>
+
+let json = []
+json = JSON.parse(localStorage.getItem('json'));
+
+const genTile = () => {
+    let tr = ''
+    for(let i = 0; i < 5; i++) {
+        tr += `
+            <tr>
+                <td class="select" data-label="left-select">
+                    <input type="text" list="list">
+                </td>
+                <td class="number" data-label="left-number">
+                    <input class="left_input" inputmode="numeric" 
+                        pattern="([0-9]{1,3}),([0-9]{1,3})" onchange="handleChange(this)">
+                </td>
+                <td class="select" data-label="right-select">
+                    <input type="text" list="list">
+                </td>
+                <td class="number" data-label="right-number">
+                    <input class="right_input" inputmode="numeric"
+                        pattern="([0-9]{1,3}),([0-9]{1,3})" onchange="handleChange(this)">
+                </td>
+            </tr>
+        `
+    }
+
+    const button = document.querySelector('main button')
+    const html = `
+        <div class="tile">
+            <input class="title"></input>
+            <table>
+                <thead>
+                    <tr>
+                        <th>借方科目</th>
+                        <th>金額</th>
+                        <th>貸方科目</th>
+                        <th>金額</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${tr}
+                </tbody>
+            </table>
+        </div>
+    `
+    button.insertAdjacentHTML('beforeBegin', html)
+}
+
+genTile()
+
+function replaceFormatNumber(numberText) {
+  if (!numberText) {
+    return ''
+  }
+  return String(numberText).replace(/\d+/, function (m) {
+    return m.replace(/(\d)(?=(?:\d{3})+$)/g, "$1,")
+  });
+}
+
+function replaceNumberText(formatNumber) {
+  if (!formatNumber) {
+    return ''
+  }
+  return formatNumber.replace(/,/g, '')
+}
+
+function handleChange(t) {
+    let v = t.value
+    v = String(replaceNumberText(v));
+    v = replaceFormatNumber(v);
+    t.value = v
+}
+
+const output = () => {
+    const chapter = document.querySelector('input.chapter').value
+    const text = document.querySelector('textarea').value.replace('\n', '<br>')
+    const tiles = document.querySelectorAll('div.tile')
+
+    let data = {ans: {}}
+
+    outer:
+    for(const tile of tiles) {
+        const title = tile.querySelector('input.title').value
+        const trs = tile.querySelectorAll('tr')
+        let ans = {left: [], right: []}
+
+        for(const tr of trs) {
+            const leftSelect = tr.querySelector('td[data-label="left-select"] input')?.value
+            const leftNumber = tr.querySelector('td[data-label="left-number"] input')?.value
+            const rightSelect = tr.querySelector('td[data-label="right-select"] input')?.value
+            const rightNumber = tr.querySelector('td[data-label="right-number"] input')?.value
+
+            if(leftSelect == '' && rightSelect == '') break
+
+            if(leftSelect) {
+                ans.left.push({
+                    select: leftSelect,
+                    number: leftNumber
+                })
+            }
+            if(rightSelect) {
+                ans.right.push({
+                    select: rightSelect,
+                    number: rightNumber
+                })
+            }
+        }
+
+        data.ans[title] = ans
+    }
+
+    data.chapter = chapter
+    data.text = text
+
+    json.push(data)
+    localStorage.setItem('json', JSON.stringify(json));
+
+    document.querySelector('div.log').classList.add('show')
+    setTimeout(() => {
+        document.querySelector('div.log').classList.remove('show')
+    }, 2000)
+
+    reset()
+}
+
+const download = () => {
+    const blob = new Blob([JSON.stringify(json)], {type: 'application\/json'});
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'data.json';
+    link.click();
+    URL.revokeObjectURL(url)
+}
+
+const reset = () => {
+    document.querySelector('textarea').value = ''
+    document.querySelectorAll('div.tile input')
+        .forEach(input => {
+            input.value = ''
+        })
+}
+
+const del = () => {
+    json = []
+    localStorage.setItem('json', '');
+}
+</script>
