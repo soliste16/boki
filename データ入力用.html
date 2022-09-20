@@ -17,12 +17,13 @@
         <button onclick="reset()">リセット</button>
         <button onclick="del()">削除</button>
         <button onclick="download()">ダウンロード</button>
+        <button onclick="copyDatalist()">リストコピー</button>
     </main>
 
-    <div class="log">出力完了</div>
+    <div class="log"></div>
 
     <datalist id="list">
-        <option>仕訳なし</option>
+        <!-- <option>仕訳なし</option>
         <option>買掛金</option>
         <option>売掛金</option>
         <option>受取手形</option>
@@ -63,7 +64,7 @@
         <option>機械装置</option>
         <option>資産除去債務</option>
         <option>利息費用</option>
-        <option>履行差額</option>
+        <option>履行差額</option> -->
     </datalist>
 
     <datalist id="chapter">
@@ -83,6 +84,8 @@
         <option>14. 研究開発費とソフトウェア - 基礎①</option>
         <option>15. 会計上の変更と誤謬の訂正 - 基礎①</option>
     </datalist>
+
+    <textarea class="copyObj"></textarea>
 </body>
 </html>
 
@@ -157,6 +160,12 @@ div.log.show {
     transform: translateY(-100px);
     opacity: 1;
 }
+
+textarea.copyObj {
+    position: fixed;
+    bottom: -10000px;
+    left: -10000px;
+}
 </style>
 
 <script>
@@ -209,7 +218,8 @@ const genTile = () => {
     button.insertAdjacentHTML('beforeBegin', html)
 }
 
-genTile()
+
+
 
 function replaceFormatNumber(numberText) {
   if (!numberText) {
@@ -256,12 +266,14 @@ const output = () => {
             if(leftSelect == '' && rightSelect == '') break
 
             if(leftSelect) {
+                updateDatalist(leftSelect)
                 ans.left.push({
                     select: leftSelect,
                     number: leftNumber
                 })
             }
             if(rightSelect) {
+                updateDatalist(rightSelect)
                 ans.right.push({
                     select: rightSelect,
                     number: rightNumber
@@ -276,12 +288,9 @@ const output = () => {
     data.text = text
 
     json.push(data)
-    localStorage.setItem('json', JSON.stringify(json));
+    localStorage.setItem('json', JSON.stringify(json))
 
-    document.querySelector('div.log').classList.add('show')
-    setTimeout(() => {
-        document.querySelector('div.log').classList.remove('show')
-    }, 2000)
+    showAlert('出力完了')
 
     reset()
 }
@@ -308,6 +317,48 @@ const reset = () => {
 
 const del = () => {
     json = []
-    localStorage.setItem('json', '');
+    localStorage.setItem('json', '[]');
 }
+
+
+
+function copyDatalist() {
+    const content = document.querySelector('textarea.copyObj')
+    content.innerText = JSON.stringify(datalist)
+    content.select()
+    document.execCommand('copy')
+
+    showAlert('コピー済み')
+}
+
+const showAlert = (text) => {
+    document.querySelector('div.log').innerText = text
+    document.querySelector('div.log').classList.add('show')
+    setTimeout(() => {
+        document.querySelector('div.log').classList.remove('show')
+    }, 2000)
+}
+
+let datalist = null
+;(async () => {
+    datalist = await fetch('datalist.json').then((res) => res.json())
+    genTile()
+    updateDatalist()
+})();
+
+
+
+const updateDatalist = (select = '') => {
+    const chapter = document.querySelector('input.chapter').value.slice(0, 1)
+    if(select) {
+        if(select in datalist && !datalist[select].includes(chapter)) datalist[select].push(chapter)
+        else if(!(select in datalist)) datalist[select] = [chapter]
+    }
+
+    let list = ''
+    for(const key in datalist) list += `<option>${key}</option>`
+    document.querySelector('datalist#list').innerHTML = list
+}
+
+
 </script>
