@@ -4,9 +4,11 @@ let page = 'top'
 let prevChapter = 1
 let prevNum = 1
 let json = null
+let datalist = null
 
 ;(async () => {
     json = await fetch('data.json').then(res => res.json())
+    datalist = await fetch('datalist.json').then(res => res.json())
     // if(page == 'top') topPage()
     // else if (page == 'question') questionPage(prevChapter, prevNum)
     topPage()
@@ -116,53 +118,95 @@ function questionBox(text) {
 
 function gameTable(data) {
     const table = []
-    let keyList = []
+    // let keyList = []
 
-    const trTemplate = `
-        <tr id="question_1_0_0" data-v-4be91447="">
-            <td class="select" data-v-4be91447="">
-                <input type="text" list="list" class="left_select" data-v-4be91447="">    
-            </td>
-            <td class="number" data-v-4be91447="">
-                <input class="left_input" inputmode="numeric" 
-                        pattern="([0-9]{1,3}),([0-9]{1,3})" data-v-4be91447=""
-                        onchange="handleChange(this)">
-            </td>
-            <td class="select" data-v-4be91447="">
-                <input type="text" list="list" class="right_select" data-v-4be91447="">    
-            </td>
-            <td class="number" data-v-4be91447="">
-                <input class="right_input" inputmode="numeric" 
-                        pattern="([0-9]{1,3}),([0-9]{1,3})" data-v-4be91447=""
-                        onchange="handleChange(this)">
-            </td>
-        </tr>
-    `
+    // const trTemplate = `
+    //     <tr id="question_1_0_0" data-v-4be91447="">
+    //         <td class="select" data-v-4be91447="">
+    //             <!-- <input type="text" list="list" class="left_select" data-v-4be91447=""> -->
+    //             <select class="left_select" data-v-4be91447="">
+                    
+    //             </select>
+    //         </td>
+    //         <td class="number" data-v-4be91447="">
+    //             <input class="left_input" inputmode="numeric" 
+    //                     pattern="([0-9]{1,3}),([0-9]{1,3})" data-v-4be91447=""
+    //                     onchange="handleChange(this)">
+    //         </td>
+    //         <td class="select" data-v-4be91447="">
+    //             <!-- <input type="text" list="list" class="right_select" data-v-4be91447=""> -->
+    //             <select class="left_select" data-v-4be91447="">
+                    
+    //             </select> 
+    //         </td>
+    //         <td class="number" data-v-4be91447="">
+    //             <input class="right_input" inputmode="numeric" 
+    //                     pattern="([0-9]{1,3}),([0-9]{1,3})" data-v-4be91447=""
+    //                     onchange="handleChange(this)">
+    //         </td>
+    //     </tr>
+    // `
     for(const key in data) {
         let tr = ''
         let trAns = ''
+        let keyList = []
+
+        for(let i = 0; i < 5; i++) {
+            if(i == 4 && !data[key].left[i] && !data[key].right[i]) break
+            if(data[key].left[i] && !(data[key].left[i] in keyList)) keyList.push(data[key].left[i].select)
+            if(data[key].right[i] && !(data[key].right[i] in keyList)) keyList.push(data[key].right[i].select)
+        }
+
+        const keyListOptionString = getKeyListOptionString(keyList)
+        console.log(keyListOptionString)
+
         for(let i = 0; i < 5; i++) {
 
             if(i == 4 && !data[key].left[i] && !data[key].right[i]) break
 
-            tr += trTemplate
+            tr += `
+                <tr id="question_1_0_0" data-v-4be91447="">
+                    <td class="select" data-v-4be91447="">
+                        <!-- <input type="text" list="list" class="left_select" data-v-4be91447=""> -->
+                        <select class="left_select input" data-v-4be91447="">
+                            ${keyListOptionString}
+                        </select>
+                    </td>
+                    <td class="number" data-v-4be91447="">
+                        <input class="left_input input" inputmode="numeric" 
+                                pattern="([0-9]{1,3}),([0-9]{1,3})" data-v-4be91447=""
+                                onchange="handleChange(this)">
+                    </td>
+                    <td class="select" data-v-4be91447="">
+                        <!-- <input type="text" list="list" class="right_select input" data-v-4be91447=""> -->
+                        <select class="left_select input" data-v-4be91447="">
+                            ${keyListOptionString}
+                        </select> 
+                    </td>
+                    <td class="number" data-v-4be91447="">
+                        <input class="right_input input" inputmode="numeric" 
+                                pattern="([0-9]{1,3}),([0-9]{1,3})" data-v-4be91447=""
+                                onchange="handleChange(this)">
+                    </td>
+                </tr>
+            `
             trAns += `
                 <tr id="question_1_0_0" data-v-4be91447="">
                     <td class="select" data-v-4be91447="">
-                        <input type="text" list="list" class="left_select" data-v-4be91447=""
+                        <input type="text" list="list" class="left_select input" data-v-4be91447=""
                             value=${data[key].left[i] ? data[key].left[i].select : ''}>
                     </td>
                     <td class="number" data-v-4be91447="">
-                        <input class="left_input" inputmode="numeric" data-v-4be91447=""
+                        <input class="left_input input" inputmode="numeric" data-v-4be91447=""
                                 pattern="([0-9]{1,3}),([0-9]{1,3})" data-v-4be91447=""
                                 value=${data[key].left[i] ? data[key].left[i].number : ''}>
                     </td>
                     <td class="select" data-v-4be91447="">
-                        <input type="text" list="list" class="right_select" data-v-4be91447=""
+                        <input type="text" list="list" class="right_select input" data-v-4be91447=""
                             value=${data[key].right[i] ? data[key].right[i].select : ''}>    
                     </td>
                     <td class="number" data-v-4be91447="">
-                        <input class="right_input" inputmode="numeric" 
+                        <input class="right_input input" inputmode="numeric" 
                                 pattern="([0-9]{1,3}),([0-9]{1,3})" data-v-4be91447=""
                                 value=${data[key].right[i] ? data[key].right[i].number : ""}>
                     </td>
@@ -205,17 +249,17 @@ function gameTable(data) {
         `)
     }
 
-    keyList = keyList.map(val => `<option>${val}</option>`)
+    // keyList = keyList.map(val => `<option>${val}</option>`)
 
     return `
         <div class="game-table-wrap" data-v-4be91447="">
             ${table.join('')}
-
-            <datalist id="list">
-                ${keyList.join('')}
-            </datalist>
         </div>
     `
+
+    // <datalist id="list">
+    //     ${keyList.join('')}
+    // </datalist>
 }
 
 function replaceFormatNumber(numberText) {
@@ -261,7 +305,7 @@ function check(t) {
         let ans = {left: [], right: []}
 
         for(let i = 0; i < inputTr.length; i++) {
-            const inputTd = inputTr[i].querySelectorAll('td input')
+            const inputTd = inputTr[i].querySelectorAll('td .input')
             const ansTd = ansTr[i].querySelectorAll('td input')
 
             if(inputTd[0].value) input.left.push({select: inputTd[0].value, number: inputTd[1].value})
@@ -278,3 +322,37 @@ function check(t) {
     if(t.classList.contains('last')) t.innerText = '終了'
     else t.innerText = '次へ'
 }
+
+function getKeyListOptionString(keyList) {
+    const chapterKey = []
+    for(const key of Object.keys(datalist)) {
+        if(datalist[key].includes(prevChapter)) chapterKey.push(key)
+    }
+
+    for(const key of chapterKey) {
+        if(!(key in keyList) && keyList.length < 8) keyList.push(key)
+    }
+
+    datalistArray = Object.entries(datalist)
+    while(keyList.length < 8) {
+        const i = Math.floor(Math.random() * datalistArray.length)
+        if(!(datalistArray[i][0] in keyList)) keyList.push(datalistArray[i][0])
+    }
+
+    keyList = arrayShuffle(keyList)
+    keyList.unshift('')
+
+    return keyList.map(val => `<option>${val}</option>`)
+}
+
+function arrayShuffle(array) {
+    for(let i = (array.length - 1); 0 < i; i--){
+  
+      let r = Math.floor(Math.random() * (i + 1));
+  
+      let tmp = array[i];
+      array[i] = array[r];
+      array[r] = tmp;
+    }
+    return array;
+  }

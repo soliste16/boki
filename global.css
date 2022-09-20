@@ -997,7 +997,7 @@ span.circle[data-v-76adddac] {
 }
 
 .game-table-wrap tbody td.select input[data-v-4be91447],
-.game-table-wrap tbody td.select span[data-v-4be91447] {
+.game-table-wrap tbody td.select span[data-v-4be91447]{
     -webkit-appearance: none;
     -moz-appearance: none;
     background: transparent;
@@ -1525,4 +1525,12 @@ p strong[data-v-02777f8a] {
 
 p.sign[data-v-02777f8a] {
     text-align: right
+}
+
+td select {
+    width: 100%;
+    height: 100%;
+    padding-left: 10px;
+    padding-right: 20px;
+    appearance: none;
 }
