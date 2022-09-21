@@ -349,7 +349,7 @@ let datalist = null
 
 
 const updateDatalist = (select = '') => {
-    const chapter = document.querySelector('input.chapter').value.slice(0, 1)
+    const chapter = document.querySelector('input.chapter').value.split('.')[0]
     if(select) {
         if(select in datalist && !datalist[select].includes(chapter)) datalist[select].push(chapter)
         else if(!(select in datalist)) datalist[select] = [chapter]
