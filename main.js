@@ -92,7 +92,7 @@ const questionPage = (chapter, num) => {
 function chapterData(chapter) {
     const data = []
     for(const val of json) {
-        if(val.chapter.startsWith(chapter)) data.push(val)
+        if(Number(val.chapter.split('.')[0]) == chapter) data.push(val)
     }
 
     return data
@@ -158,7 +158,6 @@ function gameTable(data) {
         }
 
         const keyListOptionString = getKeyListOptionString(keyList)
-        console.log(keyListOptionString)
 
         for(let i = 0; i < 5; i++) {
 
@@ -314,8 +313,8 @@ function check(t) {
             if(ansTd[2].value) ans.right.push({select: ansTd[2].value, number: ansTd[3].value})
         }
 
-        if(JSON.stringify(input.left.sort()) == JSON.stringify(ans.left.sort())
-            && JSON.stringify(input.right.sort()) == JSON.stringify(ans.right.sort())) keys[i / 2].classList.add('correct')
+        if(JSON.stringify(input.left.sort((a,b) => a.select > b.select ? 1 : -1)) == JSON.stringify(ans.left.sort((a,b) => a.select > b.select ? 1 : -1))
+            && JSON.stringify(input.right.sort((a,b) => a.select > b.select ? 1 : -1)) == JSON.stringify(ans.right.sort((a,b) => a.select > b.select ? 1 : -1))) keys[i / 2].classList.add('correct')
         else keys[i / 2].classList.add('wrong')
     }
 
