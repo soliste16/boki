@@ -1534,3 +1534,19 @@ td select {
     padding-right: 20px;
     appearance: none;
 }
+
+div.tools {
+    padding: 0 20px;
+    box-sizing: border-box;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 20px 30px 10px;
+}
+
+button.firebase {
+    padding: .5rem 1rem;
+    background-color: white;
+    border-radius: 6px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, .1);
+    cursor: pointer;
+}

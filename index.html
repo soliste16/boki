@@ -26,6 +26,10 @@
                     </ul>
                 </div>
             </header>
+
+            <div class="tools">
+                <button class="firebase" onclick="firebase()">データ連携</button>
+            </div>
             <div class="screen-wrapper">
                 <div id="game-view" level="2" data-v-336ba400="">
 
@@ -33,6 +37,44 @@
             </div>
         </div>
     </div>
+
+    <!-- <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.11.0/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.11.0/firebase-firestore.js";
+      
+        const firebaseConfig = {
+          apiKey: "AIzaSyC6ErwiVmSTIKaG0BenmttOrJF31Dzltg0",
+          authDomain: "boki-fd68b.firebaseapp.com",
+          projectId: "boki-fd68b",
+          storageBucket: "boki-fd68b.appspot.com",
+          messagingSenderId: "747425281147",
+          appId: "1:747425281147:web:c9ab2dfe10cdb63f129ede"
+        };
+      
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // const querySnapshot = await getDocs(collection(db, "wrong"));
+        // querySnapshot.forEach((doc) => {
+        //     console.log(doc.data());
+        // });
+
+        window.firebase = async () => {
+            const firebaseData = await getDocs(collection(db, "wrong"))
+            // const storage = getStorage()
+
+
+            firebaseData.forEach((doc) => {
+                console.log(doc.data());
+            });
+
+            
+        }
+
+        function getStorage() {
+            return JSON.parse(localStorage.getItem('data'))
+        }
+    </script> -->
 
     <script src="./main.js"></script>
 </body>

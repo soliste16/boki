@@ -15,6 +15,8 @@ let datalist = null
 })();
 
 const topPage = () => {
+    // firebaseGet()
+
     let list = Array(100).fill().map((_, i) => ({chapter: '', count: 0}))
     for(const data of json) {
         list[Number(data.chapter.split('.')[0])].chapter = data.chapter
@@ -354,4 +356,18 @@ function arrayShuffle(array) {
       array[r] = tmp;
     }
     return array;
-  }
+}
+
+// function firebaseGet() {
+//     const docRef = db.collection('wrong').doc('1');
+//     docRef.get().then(function(doc) {
+//         if (doc.exists) {
+//             console.log("Document data:", doc.data());
+//         } else {
+//             console.log("No such document!");
+//         }
+//     }).catch(function(error) {
+//         console.log("Error getting document:", error);
+//     });
+    
+// }
